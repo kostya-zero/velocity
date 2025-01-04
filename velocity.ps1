@@ -30,6 +30,6 @@ function Prompt {
     
     Write-Host "$cwd " -NoNewline
     Write-Host $git -NoNewline
-    Write-Host "`e[97m❱`e[0m " -NoNewline
-    return ""
+    Write-Host "`e[97m❱`e[0m" -NoNewline
+    return " "
 }
