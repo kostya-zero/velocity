@@ -1,0 +1,1 @@
+$u="https://raw.githubusercontent.com/kostya-zero/velocity/refs/heads/main/velocity.ps1";$p=$PROFILE.CurrentUserAllHosts;$d=Split-Path $p -Parent;ni $d -Type Directory -Force -EA 0;$s=Join-Path $d (Split-Path $u -Leaf);irm $u -O $s;ni $p -Type File -Force -EA 0;$l=". `"$s`"";if(!(sls -Path $p -Pattern ([regex]::Escape($l)) -Quiet)){ac $p "`n$l"}
