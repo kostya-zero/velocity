@@ -18,8 +18,8 @@ function Get-VelocityGitText {
         $gitBranch = git symbolic-ref --short HEAD
         if ($gitBranch) {
             $uncommittedChanges = (git status --porcelain).Split("`n").Count
-            $commitsAhead = (git rev-list --count `@{u}..HEAD)
-            $commitsBehind = (git rev-list --count HEAD..`@{u})
+            $commitsAhead = (git rev-list --count "@{u}..HEAD")
+            $commitsBehind = (git rev-list --count "HEAD..@{u}")
             $gitText = "`e[0m`e[90m$gitBranch`e[0m"
             if ($uncommittedChanges -gt 0) { $gitText += " `e[93m✎ $uncommittedChanges`e[0m" }
             if ($commitsAhead -gt 0) { $gitText += " `e[92m↑$commitsAhead`e[0m" }
