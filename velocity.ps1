@@ -1,4 +1,4 @@
-function Get-VelocityCwdText {
+function Get-VelocityCwd {
     $cwd = (Get-Location).Path
 
     # Add tilda if home directory.
@@ -17,7 +17,14 @@ function Get-VelocityGitText {
     if (Get-Command git -ErrorAction SilentlyContinue) {
         $gitBranch = git symbolic-ref --short HEAD
         if ($gitBranch) {
-            return "`e[0m`e[90m$gitBranch`e[0m "
+            $uncommittedChanges = (git status --porcelain).Split("`n").Count
+            $commitsAhead = (git rev-list --count `@{u}..HEAD)
+            $commitsBehind = (git rev-list --count HEAD..`@{u})
+            $gitText = "`e[0m`e[90m$gitBranch`e[0m"
+            if ($uncommittedChanges -gt 0) { $gitText += " `e[93m✎ $uncommittedChanges`e[0m" }
+            if ($commitsAhead -gt 0) { $gitText += " `e[92m↑$commitsAhead`e[0m" }
+            if ($commitsBehind -gt 0) { $gitText += " `e[91m↓$commitsBehind`e[0m" }
+            return "$gitText "
         }
     } else {
         return ""
@@ -25,11 +32,15 @@ function Get-VelocityGitText {
 }
 
 function Prompt {
-    $cwd = Get-VelocityCwdText
+    $cwd = Get-VelocityCwd
     $git = Get-VelocityGitText
     
     Write-Host "$cwd " -NoNewline
     Write-Host $git -NoNewline
-    Write-Host "`e[97m❱`e[0m" -NoNewline
+    if ($?) {
+        Write-Host "`e[97m❱`e[0m" -NoNewline
+    } else {
+        Write-Host "`e[91m❱`e[0m" -NoNewline
+    }
     return " "
 }
