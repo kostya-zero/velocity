@@ -40,7 +40,7 @@ function Prompt {
     if ($?) {
         Write-Host "`e[97m❱`e[0m" -NoNewline
     } else {
-        Write-Host "`e[91m❱`e[0m" -NoNewline
+        Write-Host "`e[91m❱`e[0m " -NoNewline
     }
     return " "
 }
