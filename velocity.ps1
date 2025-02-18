@@ -17,14 +17,19 @@ function Get-VelocityGitText {
     if (Get-Command git -ErrorAction SilentlyContinue) {
         $gitBranch = git symbolic-ref --short HEAD
         if ($gitBranch) {
-            $uncommittedChanges = (git status --porcelain).Split("`n").Count
+            $uncommittedChangesRaw = (git status --porcelain)
+            if ($uncommittedChangesRaw.Length -gt 0) {
+                $uncommittedChanges = ($uncommittedChangesRaw -split "`n").Length
+            } else {
+                $uncommittedChanges = 0
+            }
             $commitsAhead = (git rev-list --count "@{u}..HEAD")
             $commitsBehind = (git rev-list --count "HEAD..@{u}")
             $gitText = "`e[0m`e[90m$gitBranch`e[0m"
             if ($uncommittedChanges -gt 0) { $gitText += " `e[93m✎ $uncommittedChanges`e[0m" }
             if ($commitsAhead -gt 0) { $gitText += " `e[92m↑$commitsAhead`e[0m" }
             if ($commitsBehind -gt 0) { $gitText += " `e[91m↓$commitsBehind`e[0m" }
-            return "$gitText "
+            return " $gitText "
         }
     } else {
         return ""
@@ -32,15 +37,21 @@ function Get-VelocityGitText {
 }
 
 function Prompt {
-    $cwd = Get-VelocityCwd
-    $git = Get-VelocityGitText
-    
-    Write-Host "$cwd " -NoNewline
-    Write-Host $git -NoNewline
-    if ($?) {
-        Write-Host "`e[97m❱`e[0m" -NoNewline
-    } else {
-        Write-Host "`e[91m❱`e[0m" -NoNewline
+    try {
+        $cwd = Get-VelocityCwd
+        $git = Get-VelocityGitText
+        
+        Write-Host "$cwd" -NoNewline
+        Write-Host $git -NoNewline
+        if ($?) {
+            Write-Host "`e[97m❱`e[0m" -NoNewline
+        } else {
+            Write-Host "`e[91m❱`e[0m" -NoNewline
+        }
+        return " "
     }
-    return " "
+    catch {
+        Write-Host "Error loading prompt: $_"
+        throw
+    }
 }
