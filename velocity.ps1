@@ -29,7 +29,7 @@ function Get-VelocityGitText {
             if ($uncommittedChanges -gt 0) { $gitText += " `e[93m✎ $uncommittedChanges`e[0m" }
             if ($commitsAhead -gt 0) { $gitText += " `e[92m↑$commitsAhead`e[0m" }
             if ($commitsBehind -gt 0) { $gitText += " `e[91m↓$commitsBehind`e[0m" }
-            return " $gitText "
+            return "$gitText "
         }
     } else {
         return ""
@@ -41,7 +41,7 @@ function Prompt {
         $cwd = Get-VelocityCwd
         $git = Get-VelocityGitText
         
-        Write-Host "$cwd" -NoNewline
+        Write-Host "$cwd " -NoNewline
         Write-Host $git -NoNewline
         if ($?) {
             Write-Host "`e[97m❱`e[0m" -NoNewline
